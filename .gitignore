@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+venv/
+*.db
+legal_ai_platform.db
+.idea/

@@ -1,3 +1,5 @@
+[file name]: base.html
+[file content begin]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -12,33 +14,48 @@
 
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #16a085;
-            --light-bg: #ecf0f1;
-            --dark-text: #2c3e50;
+            --primary-dark: #0d1b2a;     /* Темно-синий из макетов */
+            --primary-blue: #1b3a6f;     /* Основной синий */
+            --accent-blue: #2a5ca7;      /* Акцентный синий */
+            --light-blue: #e6f0ff;       /* Светло-голубой фон */
+            --secondary-gray: #6c757d;   /* Серый для текста */
+            --success-green: #28a745;    /* Зеленый для успеха */
+            --warning-orange: #ff9800;   /* Оранжевый для предупреждений */
+            --danger-red: #dc3545;       /* Красный для ошибок */
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', 'Roboto', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
             min-height: 100vh;
             padding-bottom: 2rem;
         }
 
         .navbar {
-            background: rgba(255, 255, 255, 0.95) !important;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            background-color: var(--primary-dark) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand {
-            font-weight: bold;
-            color: var(--primary-color) !important;
-            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white) !important;
+            font-size: 1.4rem;
+        }
+
+        .navbar-brand i {
+            color: #4dabf7;
+        }
+
+        .nav-link {
+            color: #e9ecef !important;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #4dabf7 !important;
         }
 
         .main-container {
@@ -46,37 +63,50 @@
         }
 
         .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-color: var(--white);
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
 
         .card-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
             color: white;
-            border-radius: 15px 15px 0 0 !important;
-            padding: 1.5rem;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 1.25rem;
             font-weight: 600;
+            border-bottom: 0;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
             border: none;
             padding: 0.75rem 2rem;
-            border-radius: 25px;
+            border-radius: 6px;
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .btn-primary:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #1e4a8a 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(42, 92, 167, 0.3);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--accent-blue);
+            color: white;
         }
 
         .avatar {
@@ -89,100 +119,166 @@
             color: white;
             font-weight: bold;
             font-size: 1.2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .alert {
-            border-radius: 10px;
+            border-radius: 8px;
             border: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .badge {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
             font-weight: 600;
+        }
+
+        .badge.bg-primary {
+            background-color: var(--accent-blue) !important;
+        }
+
+        .badge.bg-success {
+            background-color: var(--success-green) !important;
+        }
+
+        .badge.bg-warning {
+            background-color: var(--warning-orange) !important;
+            color: #212529;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--danger-red) !important;
         }
 
         .stat-card {
             background: white;
-            padding: 2rem;
-            border-radius: 15px;
+            padding: 1.5rem;
+            border-radius: 8px;
             text-align: center;
-            transition: all 0.3s ease;
+            border-left: 4px solid var(--accent-blue);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
         .stat-card i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
+            color: var(--accent-blue);
         }
 
         .stat-card h3 {
-            font-size: 2.5rem;
-            font-weight: bold;
+            font-size: 2rem;
+            font-weight: 700;
             margin: 0.5rem 0;
+            color: var(--primary-dark);
         }
 
         .footer {
             margin-top: 3rem;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             text-align: center;
-            color: white;
+            color: var(--secondary-gray);
+            border-top: 1px solid #dee2e6;
+            background-color: white;
         }
 
         .modal-content {
-            border-radius: 15px;
+            border-radius: 10px;
             border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .modal-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
             color: white;
-            border-radius: 15px 15px 0 0;
+            border-radius: 10px 10px 0 0;
         }
 
         .form-control, .form-select {
-            border-radius: 10px;
-            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
             padding: 0.75rem;
             transition: all 0.3s ease;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(42, 92, 167, 0.25);
         }
 
         .table {
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 0;
         }
 
         .table thead {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
             color: white;
         }
 
+        .table th {
+            border-bottom: 0;
+            font-weight: 600;
+        }
+
         .table tbody tr:hover {
+            background-color: var(--light-blue);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        h2.text-white {
+            color: var(--primary-dark) !important;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        h2.text-white i {
+            color: var(--accent-blue);
+        }
+
+        /* Дополнительные стили для соответствия макетам из отчета */
+        .dropdown-menu {
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #dee2e6;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            border-radius: 4px;
+        }
+
+        .btn-light {
             background-color: #f8f9fa;
-            transform: scale(1.01);
-            transition: all 0.2s ease;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+
+        .btn-light:hover {
+            background-color: #e9ecef;
+            border-color: #ced4da;
+        }
+
+        .bg-light {
+            background-color: var(--light-gray) !important;
         }
     </style>
 
@@ -190,7 +286,7 @@
 </head>
 <body>
     <!-- Навигационная панель -->
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <i class="bi bi-scale"></i> Юридическая AI-Платформа
@@ -206,7 +302,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
                                role="button" data-bs-toggle="dropdown">
-                                <div class="avatar me-2" style="background-color: {{ avatar_color|default('#007bff') }}">
+                                <div class="avatar me-2">
                                     {{ username[0].upper() }}
                                 </div>
                                 <span class="fw-bold">{{ username }}</span>
@@ -263,7 +359,6 @@
     <div class="footer">
         <div class="container">
             <p class="mb-0">&copy; 2025 Юридическая AI-Платформа. Все права защищены.</p>
-            <p class="mb-0"><small>Версия 1.0 | Разработано с ❤️</small></p>
         </div>
     </div>
 
@@ -273,3 +368,4 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+[file content end]

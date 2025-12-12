@@ -80,8 +80,10 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" 
-                                            onclick="showMessageDetails({{ msg.id }}, '{{ msg.message }}', '{{ msg.response }}')">
+                                    <button class="btn btn-sm btn-outline-primary message-details-btn"
+                                            data-id="{{ msg.id }}"
+                                            data-message="{{ msg.message }}"
+                                            data-response="{{ msg.response }}">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </td>
@@ -142,9 +144,25 @@
         document.getElementById('modal-msg-id').textContent = id;
         document.getElementById('modal-question').textContent = question;
         document.getElementById('modal-response').textContent = response;
-        
+
         const modal = new bootstrap.Modal(document.getElementById('messageModal'));
         modal.show();
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.message-details-btn');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const message = this.getAttribute('data-message');
+            const response = this.getAttribute('data-response');
+
+            showMessageDetails(id, message, response);
+        });
+    });
+});
+
+
 </script>
 {% endblock %}

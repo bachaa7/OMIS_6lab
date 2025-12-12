@@ -148,7 +148,7 @@ if __name__ == '__main__':
     # Создание и запуск приложения
     app = create_app('development')
 
-    print("\n🌐 ОТКРОЙТЕ В БРАУЗЕРЕ: http://localhost:5000")
+    print("\n🌐 ОТКРОЙТЕ В БРАУЗЕРЕ")
     print("=" * 60 + "\n")
 
     app.run(debug=True, host='0.0.0.0', port=5555)

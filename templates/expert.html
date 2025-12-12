@@ -107,8 +107,10 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" 
-                                            onclick="showVerifyModal({{ msg.id }}, '{{ msg.message }}', '{{ msg.response }}')">
+                                    <button class="btn btn-sm btn-outline-primary verify-btn"
+                                            data-id="{{msg.id}}"
+                                            data-message="{{ msg.message }}"
+                                            data-response="{{ msg.response }}">
                                         <i class="bi bi-check-square"></i> Проверить
                                     </button>
                                 </td>
@@ -213,7 +215,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Примечания эксперта</label>
-                        <textarea class="form-control" name="notes" rows="3" 
+                        <textarea class="form-control" name="notes" rows="3"
                                   placeholder="Добавьте комментарий (необязательно)"></textarea>
                     </div>
                 </div>
@@ -264,7 +266,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Источник</label>
-                        <input type="text" class="form-control" name="source" 
+                        <input type="text" class="form-control" name="source"
                                placeholder="Например: ГК РФ, статья 123">
                     </div>
                     <div class="mb-3">
@@ -289,9 +291,21 @@
         document.getElementById('verify-question').textContent = question;
         document.getElementById('verify-response').textContent = response;
         document.getElementById('verifyForm').action = `/expert/message/${id}/verify`;
-        
+
         const modal = new bootstrap.Modal(document.getElementById('verifyModal'));
         modal.show();
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.verify-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            showVerifyModal(
+                this.getAttribute('data-id'),
+                this.getAttribute('data-message'),
+                this.getAttribute('data-response')
+            );
+        });
+    });
+});
 </script>
 {% endblock %}

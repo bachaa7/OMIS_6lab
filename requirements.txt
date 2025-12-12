@@ -1,10 +1,9 @@
 Flask==3.0.0
 Werkzeug==3.0.1
-
-# NLP библиотеки (опционально - можно использовать rule-based подход)
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
 natasha==1.6.0
-
-# База данных (встроенная SQLite)
-
-# Для работы с датами
+pymorphy2==0.9.1
+pymorphy2-dicts==2.4.393442.3710985  # Последняя доступная версия
+setuptools==70.0.0
 python-dateutil==2.8.2
