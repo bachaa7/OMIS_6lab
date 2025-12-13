@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Юридическая AI-Платформа{% endblock %}
+
+{% block content %}
+<!-- Hero секция -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+            <div class="card-body py-5 text-white">
+                <h1 class="display-3 fw-bold mb-4">
+                    <i class="bi bi-scale"></i> Юридическая AI-Платформа
+                </h1>
+                <p class="lead fs-4 mb-4">
+                    Интеллектуальная система юридической помощи с виртуальными помощниками
+                </p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="/register" class="btn btn-light btn-lg px-5">
+                        <i class="bi bi-person-plus"></i> Начать работу
+                    </a>
+                    <a href="/login" class="btn btn-outline-light btn-lg px-5">
+                        <i class="bi bi-box-arrow-in-right"></i> Войти
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Статистика -->
+<div class="row mb-5">
+    <div class="col-md-6 mb-4">
+        <div class="stat-card">
+            <i class="bi bi-people-fill text-primary"></i>
+            <h3 class="text-primary">{{ stats.users }}</h3>
+            <p class="text-muted mb-0">Пользователей</p>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="stat-card">
+            <i class="bi bi-robot text-success"></i>
+            <h3 class="text-success">{{ stats.assistants }}</h3>
+            <p class="text-muted mb-0">Виртуальных помощников</p>
+        </div>
+    </div>
+</div>
+
+<!-- Возможности системы -->
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center text-white mb-4">
+            <i class="bi bi-stars"></i> Возможности платформы
+        </h2>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-3">
+                    <i class="bi bi-chat-dots-fill text-primary" style="font-size: 4rem;"></i>
+                </div>
+                <h4 class="card-title">Чат с AI помощниками</h4>
+                <p class="card-text text-muted">
+                    Получите консультации по различным отраслям права от специализированных виртуальных помощников
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-3">
+                    <i class="bi bi-book-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h4 class="card-title">База знаний</h4>
+                <p class="card-text text-muted">
+                    Доступ к обширной базе юридических материалов, статей и нормативных актов
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="mb-3">
+                    <i class="bi bi-file-earmark-text-fill text-info" style="font-size: 4rem;"></i>
+                </div>
+                <h4 class="card-title">Генерация документов</h4>
+                <p class="card-text text-muted">
+                    Автоматическое создание юридических документов на основе ваших данных
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Роли в системе -->
+<div class="row mb-5">
+    <div class="col-12 mb-4">
+        <h2 class="text-center text-white mb-4">
+            <i class="bi bi-diagram-3-fill"></i> Роли в системе
+        </h2>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="avatar mx-auto mb-3" style="background-color: #dc3545; width: 70px; height: 70px; font-size: 2rem;">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h5 class="card-title">Администратор</h5>
+                <p class="card-text text-muted small">
+                    Управление системой, пользователями и помощниками
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="avatar mx-auto mb-3" style="background-color: #17a2b8; width: 70px; height: 70px; font-size: 2rem;">
+                    <i class="bi bi-code-slash"></i>
+                </div>
+                <h5 class="card-title">Разработчик</h5>
+                <p class="card-text text-muted small">
+                    Создание и тестирование помощников, работа с NLP
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="avatar mx-auto mb-3" style="background-color: #28a745; width: 70px; height: 70px; font-size: 2rem;">
+                    <i class="bi bi-award"></i>
+                </div>
+                <h5 class="card-title">Эксперт</h5>
+                <p class="card-text text-muted small">
+                    Верификация ответов и управление базой знаний
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center p-4">
+                <div class="avatar mx-auto mb-3" style="background-color: #6c757d; width: 70px; height: 70px; font-size: 2rem;">
+                    <i class="bi bi-person"></i>
+                </div>
+                <h5 class="card-title">Клиент</h5>
+                <p class="card-text text-muted small">
+                    Получение юридических консультаций и документов
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Призыв к действию -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <h3 class="mb-4">Готовы начать?</h3>
+                <p class="lead text-muted mb-4">
+                    Зарегистрируйтесь и получите доступ к мощным инструментам юридической помощи
+                </p>
+                <a href="/register" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-rocket-takeoff"></i> Зарегистрироваться
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

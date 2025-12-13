@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Панель эксперта - Юридическая AI-Платформа{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2 class="text-white">
+            <i class="bi bi-award"></i> Панель эксперта
+        </h2>
+    </div>
+</div>
+
+<!-- Статистика -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-clock-history text-warning" style="font-size: 3rem;"></i>
+                <h3 class="mt-2">{{ stats.unverified_count }}</h3>
+                <p class="text-muted mb-0">Требует верификации</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-book-fill text-primary" style="font-size: 3rem;"></i>
+                <h3 class="mt-2">{{ stats.knowledge_count }}</h3>
+                <p class="text-muted mb-0">База знаний</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                <h3 class="mt-2">{{ stats.verified_today }}</h3>
+                <p class="text-muted mb-0">Верифицировано сегодня</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Неверифицированные сообщения -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clipboard-check"></i> Требует верификации
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if unverified_messages %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Дата</th>
+                                <th>Пользователь</th>
+                                <th>Помощник</th>
+                                <th>Вопрос</th>
+                                <th>Ответ</th>
+                                <th>Уверенность</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for msg in unverified_messages %}
+                            <tr>
+                                <td>{{ msg.id }}</td>
+                                <td>
+                                    <small class="text-muted">{{ msg.created_at }}</small>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2" style="background-color: {{ msg.user_color }}; width: 30px; height: 30px; font-size: 0.9rem;">
+                                            {{ msg.user_name[0].upper() }}
+                                        </div>
+                                        <small>{{ msg.user_name }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span style="font-size: 1.5rem;">{{ msg.assistant_icon }}</span>
+                                    <br><small>{{ msg.assistant_name }}</small>
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 200px;" title="{{ msg.message }}">
+                                        {{ msg.message }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 250px;" title="{{ msg.response }}">
+                                        {{ msg.response[:100] }}...
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set confidence = (msg.confidence * 100)|int %}
+                                    {% if confidence >= 70 %}
+                                        <span class="badge bg-success">{{ confidence }}%</span>
+                                    {% elif confidence >= 50 %}
+                                        <span class="badge bg-warning text-dark">{{ confidence }}%</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ confidence }}%</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" 
+                                            onclick="showVerifyModal({{ msg.id }}, '{{ msg.message }}', '{{ msg.response }}')">
+                                        <i class="bi bi-check-square"></i> Проверить
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+                    <p class="text-muted mt-3">Нет сообщений, требующих верификации</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- База знаний -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-book"></i> База знаний
+                </h5>
+                <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addKnowledgeModal">
+                    <i class="bi bi-plus-circle"></i> Добавить материал
+                </button>
+            </div>
+            <div class="card-body">
+                {% if knowledge_items %}
+                <div class="row">
+                    {% for item in knowledge_items %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="card-title mb-0">
+                                        <span class="me-2" style="font-size: 1.5rem;">{{ item.icon }}</span>
+                                        {{ item.title }}
+                                    </h6>
+                                    {% if item.is_verified %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle"></i> Верифицирован
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Ожидает</span>
+                                    {% endif %}
+                                </div>
+                                <p class="card-text text-muted small">
+                                    {{ item.content[:150] }}{% if item.content|length > 150 %}...{% endif %}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-primary">{{ item.category }}</span>
+                                    <small class="text-muted">
+                                        {% if item.uploader_name %}
+                                            от {{ item.uploader_name }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+                    <p class="text-muted mt-3">База знаний пуста</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно верификации -->
+<div class="modal fade" id="verifyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-square"></i> Верификация сообщения #<span id="verify-msg-id"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="verifyForm">
+                <div class="modal-body">
+                    <div class="mb-4">
+                        <h6 class="text-primary">
+                            <i class="bi bi-question-circle"></i> Вопрос пользователя:
+                        </h6>
+                        <div class="p-3 bg-light rounded" id="verify-question"></div>
+                    </div>
+                    <div class="mb-4">
+                        <h6 class="text-success">
+                            <i class="bi bi-chat-left-quote"></i> Ответ системы:
+                        </h6>
+                        <div class="p-3 bg-light rounded" id="verify-response" style="white-space: pre-line;"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Примечания эксперта</label>
+                        <textarea class="form-control" name="notes" rows="3" 
+                                  placeholder="Добавьте комментарий (необязательно)"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" name="action" value="reject" class="btn btn-warning">
+                        <i class="bi bi-x-circle"></i> Отклонить
+                    </button>
+                    <button type="submit" name="action" value="approve" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Одобрить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно добавления материала -->
+<div class="modal fade" id="addKnowledgeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-book"></i> Добавить материал в базу знаний
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="/expert/knowledge/add">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Название</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Содержание</label>
+                        <textarea class="form-control" name="content" rows="6" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Категория</label>
+                        <select class="form-select" name="category" required>
+                            <option value="гражданское_право">Гражданское право</option>
+                            <option value="трудовое_право">Трудовое право</option>
+                            <option value="семейное_право">Семейное право</option>
+                            <option value="налоговое_право">Налоговое право</option>
+                            <option value="уголовное_право">Уголовное право</option>
+                            <option value="административное_право">Административное право</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Источник</label>
+                        <input type="text" class="form-control" name="source" 
+                               placeholder="Например: ГК РФ, статья 123">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Иконка (emoji)</label>
+                        <input type="text" class="form-control" name="icon" value="📚">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showVerifyModal(id, question, response) {
+        document.getElementById('verify-msg-id').textContent = id;
+        document.getElementById('verify-question').textContent = question;
+        document.getElementById('verify-response').textContent = response;
+        document.getElementById('verifyForm').action = `/expert/message/${id}/verify`;
+        
+        const modal = new bootstrap.Modal(document.getElementById('verifyModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}

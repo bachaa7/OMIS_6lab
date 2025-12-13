@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}История консультаций - Юридическая AI-Платформа{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2 class="text-white">
+            <i class="bi bi-clock-history"></i> История консультаций
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul"></i> Ваши обращения
+                </h5>
+                <a href="/chat" class="btn btn-sm btn-primary">
+                    <i class="bi bi-chat-dots"></i> Новый диалог
+                </a>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="5%">#</th>
+                                <th width="15%">Дата/Время</th>
+                                <th width="15%">Помощник</th>
+                                <th width="30%">Вопрос</th>
+                                <th width="20%">Категория</th>
+                                <th width="10%">Уверенность</th>
+                                <th width="5%">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for msg in messages %}
+                            <tr>
+                                <td>{{ msg.id }}</td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ msg.created_at }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2" style="font-size: 1.5rem;">{{ msg.assistant_icon or '⚖️' }}</span>
+                                        <small>{{ msg.assistant_name or 'Общий' }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="text-truncate" style="max-width: 300px;" title="{{ msg.message }}">
+                                        {{ msg.message }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ msg.category or 'Общее' }}</span>
+                                    {% if msg.is_verified %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Верифицировано
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if msg.confidence %}
+                                    {% set confidence = (msg.confidence * 100)|int %}
+                                    {% if confidence >= 70 %}
+                                        <span class="badge bg-success">{{ confidence }}%</span>
+                                    {% elif confidence >= 50 %}
+                                        <span class="badge bg-warning text-dark">{{ confidence }}%</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ confidence }}%</span>
+                                    {% endif %}
+                                    {% else %}
+                                    <span class="badge bg-secondary">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" 
+                                            onclick="showMessageDetails({{ msg.id }}, '{{ msg.message }}', '{{ msg.response }}')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+                    <p class="text-muted mt-3">У вас пока нет консультаций</p>
+                    <a href="/chat" class="btn btn-primary">
+                        <i class="bi bi-chat-dots"></i> Начать диалог
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно с деталями -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-chat-square-quote"></i> Детали консультации #<span id="modal-msg-id"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4">
+                    <h6 class="text-primary">
+                        <i class="bi bi-question-circle"></i> Вопрос:
+                    </h6>
+                    <div class="p-3 bg-light rounded" id="modal-question"></div>
+                </div>
+                <div>
+                    <h6 class="text-success">
+                        <i class="bi bi-chat-left-quote"></i> Ответ:
+                    </h6>
+                    <div class="p-3 bg-light rounded" id="modal-response" style="white-space: pre-line;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function showMessageDetails(id, question, response) {
+        document.getElementById('modal-msg-id').textContent = id;
+        document.getElementById('modal-question').textContent = question;
+        document.getElementById('modal-response').textContent = response;
+        
+        const modal = new bootstrap.Modal(document.getElementById('messageModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}
