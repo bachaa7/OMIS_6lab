@@ -2,6 +2,7 @@
 Сервис обработки естественного языка
 Представляет подсистему NLP и интерфейса
 """
+from .knowledge_service import KnowledgeService
 
 try:
     from natasha import (
@@ -65,10 +66,9 @@ class NLPService:
             dict: Результат анализа с интентом, категорией, ответом
         """
         print(f"🔍 Анализ запроса: '{text}'")
-
         text_lower = text.lower().strip()
 
-        # Определяем интент
+        # 1. сначала модель (Natasha), при её отсутствии – rule-based
         intent = 'общий_вопрос'
         confidence = 0.3
 
@@ -77,14 +77,14 @@ class NLPService:
         else:
             intent, confidence = self._analyze_rule_based(text_lower)
 
-        print(f"   Определен интент: {intent} (уверенность: {confidence:.2f})")
+        print(f"  Определен интент: {intent} (уверенность: {confidence:.2f})")
 
-        # Определяем категорию
+        # 2. категория
         category = self._detect_category(intent, text_lower)
-        print(f"   Категория: {category}")
+        print(f"  Категория: {category}")
 
-        # Генерируем ответ
-        response = self._generate_response(intent, category, text_lower)
+        # 3. генерация ответа (приоритет: база знаний → rule-based)
+        response = self._generate_smart_response(intent, category, text_lower, confidence)
 
         return {
             'intent': intent,
@@ -94,6 +94,49 @@ class NLPService:
             'timestamp': datetime.now().strftime('%H:%M'),
             'icon': self._get_icon(intent)
         }
+
+    def _generate_smart_response(self, intent, category, text, confidence):
+        """
+        1) Пытаемся найти ответ в базе знаний (по категории и ключевому слову)
+        2) Если ничего нет или уверенность модели низкая – используем rule-based
+        """
+        if confidence < 0.4 and intent == 'общий_вопрос':
+            return self._generate_response(intent, category, text)
+
+        # Подбираем ключ для поиска по базе
+        intent_to_query = {
+            'договор_купли_продажи': 'купли-продажи квартиры',
+            'договор_аренды': 'аренды квартиры',
+            'трудовой_договор': 'трудовой договор',
+            'брачный_договор': 'брачный договор',
+            'алименты': 'алименты',
+            'развод': 'расторжение брака',
+            'наследство': 'наследство',
+            'налог': 'налог',
+            'жалоба': 'жалоба',
+            'исковое_заявление': 'исковое заявление',
+            'доверенность': 'оверенность',
+            'расторжение_договора': 'расторжение договора',
+        }
+
+        query_text = intent_to_query.get(intent, text)
+        print("INTENT:", intent, "QUERY_TEXT:", query_text, "CATEGORY:", category)
+
+        try:
+            kb_results = KnowledgeService.search_knowledge(
+                query=query_text,
+                category=category if category != 'общее_право' else None
+            )
+            print("KB RESULTS:", kb_results)
+
+            if kb_results:
+                top = kb_results[0]
+                return f"{top.title}\n\n{top.content}"
+
+        except Exception as e:
+            print(f"⚠️ Ошибка поиска в базе знаний: {e}")
+
+        return self._generate_response(intent, category, text)
 
     def _analyze_with_natasha(self, text):
         """Анализ с использованием Natasha"""
@@ -122,14 +165,14 @@ class NLPService:
                 return best_intent[0], min(best_intent[1] / 10, 0.95)
 
             return 'общий_вопрос', 0.3
+
         except Exception as e:
-            print(f"   Ошибка Natasha: {e}")
+            print(f" Ошибка Natasha: {e}")
             return self._analyze_rule_based(text)
 
     def _analyze_rule_based(self, text):
         """Простой rule-based анализ"""
         intent_scores = {}
-
         for intent_name, keywords in self.INTENT_KEYWORDS.items():
             score = sum(1 for kw in keywords if kw in text)
             if score > 0:
