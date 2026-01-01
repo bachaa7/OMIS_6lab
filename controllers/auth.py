@@ -1,7 +1,3 @@
-"""
-Контроллер аутентификации
-Обрабатывает вход, выход и регистрацию пользователей
-"""
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from services.auth_service import AuthService
 from utils.logger import SystemLogger
@@ -11,10 +7,9 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """Страница входа в систему"""
     if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        password = request.form.get('password')
+        username = request.form.get('username', '').strip().replace(' ', '')
+        password = request.form.get('password', '').strip()
 
         if not username or not password:
             flash('Заполните все поля', 'danger')
@@ -40,11 +35,10 @@ def login():
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    """Страница регистрации"""
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         email = request.form.get('email', '').strip()
-        password = request.form.get('password')
+        password = request.form.get('password', '').strip()
         role = request.form.get('role', 'client')
 
         if not username or not email or not password:
@@ -67,7 +61,6 @@ def register():
 
 @auth_bp.route('/logout')
 def logout():
-    """Выход из системы"""
     if 'user_id' in session:
         SystemLogger.info(
             f'Пользователь {session.get("username")} вышел из системы',
